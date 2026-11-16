@@ -2,15 +2,15 @@ name: Build and Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ master ]
+    branches: [ main, master ]
   schedule:   
     - cron: '0 12 * * *'
 
 jobs:
   build:
-    name: Run Unit Tests
+    name: Run Unit and Mutation Tests
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v7.0.1
@@ -19,16 +19,29 @@ jobs:
       with:
         node-version: 22
         cache: 'npm'
-    - run: npm install      
-    - run: npm run coverage
+    - run: npm ci
+    - name: Run unit tests with coverage
+      run: npm run coverage
+    - name: Run mutation tests
+      run: npm run mutation
 
   sonarcloud:
     name: Run SonarCloud
+    if: ${{ vars.SONAR_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
+      - name: Use Node.js 22
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate coverage report
+        run: npm run coverage
       - name: Official SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v8.2.1
         env:

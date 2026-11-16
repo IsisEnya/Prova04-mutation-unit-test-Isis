@@ -23,6 +23,10 @@ All execution artifacts can be found in `./coverage`, if you want to remove thes
 
 Run `npm run mutation` to use [Stryker Mutator](https://stryker-mutator.io/) to create mutations in `src/**/*.js` and check whether the Jest tests detect them. The mutation score and HTML report are generated in `./reports/mutation`.
 
+## GitHub Actions
+
+The workflow runs the Jest coverage and mutation tests on pushes and pull requests to `main` or `master`. The SonarCloud job is optional; enable it by adding the repository Actions variable `SONAR_ENABLED` with value `true` and the repository secret `SONAR_TOKEN`.
+
 ## Project Structure
 </br>
 <ul>
